@@ -1,0 +1,12 @@
+### mnist 数据
+
+
+* MNIST（Mixed National Institute of Standards and Technology database）是一个非常简单的机器视觉数据集
+* 包含28*28像素的手写数字组成，这些图片只包含灰度信息，
+* 55000个样本，10000个测试 + 5000个验证
+
+
+
+### 数据介绍
+
+![](mnist/mnist数字灰度信息.png)
