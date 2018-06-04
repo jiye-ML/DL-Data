@@ -3,6 +3,13 @@
 * 10类， 每一类图片6000张
 * airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck
 
+
+* 这里应该存在两种cifar数据，
+    * 一种是tensorflow封装过的 record数据， 这种数据后缀都是bin问题
+    * 一种是python的可以使用pickle.load 加载的文件，这种文件区别只是没有bin后缀
+
+
+
 ### 参考文献
 
 * [CNN训练Cifar-10技巧](http://www.cnblogs.com/neopenx/p/4480701.html)
