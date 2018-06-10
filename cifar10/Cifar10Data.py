@@ -14,8 +14,8 @@ class Cifar10Data:
         self._i = 0
 
         # data
-        self.train_images, self.train_labels = self.load(["data_batch_{}".format(i) for i in range(1, 6)])
-        self.test_images, self.test_labels = self.load(["test_batch"])
+        self.train_images, self.train_labels = self._load(["data_batch_{}".format(i) for i in range(1, 6)])
+        self.test_images, self.test_labels = self._load(["test_batch"])
         pass
 
     @staticmethod
@@ -33,7 +33,7 @@ class Cifar10Data:
         data = [self._unpickle(f) for f in source]
         images = np.vstack([d["data"] for d in data])
         n = len(images)
-        images = images.reshape(n, 3, 32, 32).transpose(0, 2, 3, 1).astype(float) / 255
+        images = images.reshape(n, 3, 32, 32).transpose(0, 2, 3, 1).astype(np.float32) / 255
         labels = Cifar10Data.one_hot(np.hstack([d["labels"] for d in data]), 10)
         return images, labels
 
@@ -57,6 +57,54 @@ class Cifar10Data:
 
     pass
 
+
+class PreData:
+
+    def __init__(self, data, flip=True, shuffle=True, _standardization=True):
+        self.data = data
+        self.flip = flip
+        self.shuffle = shuffle
+        self.standardization = _standardization
+        pass
+
+    def __call__(self, *args, **kwargs):
+        train_data, train_labels = self.data.train_images, self.data.train_labels
+        test_data, test_labels = self.data.test_images, self.data.test_labels
+
+        print("Train data:", np.shape(train_data), np.shape(train_labels))
+        print("Test data :", np.shape(test_data), np.shape(test_labels))
+        print("======Load finished======")
+
+        if self.shuffle:
+            print("======Shuffling data======")
+            indices = np.random.permutation(len(train_data))
+            train_data = train_data[indices]
+            train_labels = train_labels[indices]
+        if self.standardization:
+            print("======color_preprocess data======")
+            train_data, test_data = self._standardization(train_data, test_data)
+        if self.flip :
+            train_data += self._random_flip_leftright(train_data)
+
+        return train_data, train_labels, test_data, test_labels
+
+    def _random_flip_leftright(self, batch):
+        for i in range(len(batch)):
+            if bool(np.random.getrandbits(1)):
+                batch[i] = np.fliplr(batch[i])
+        return batch
+
+    def _standardization(self, x_train, x_test):
+        x_train = x_train.astype('float32')
+        x_test = x_test.astype('float32')
+        mean = [125.307, 122.95, 113.865]
+        std = [62.9932, 62.0887, 66.7048]
+        for i in range(3):
+            x_train[:, :, :, i] = (x_train[:, :, :, i] - mean[i]) / std[i]
+            x_test[:, :, :, i] = (x_test[:, :, :, i] - mean[i]) / std[i]
+        return x_train, x_test
+
+    pass
 
 
 def create_cifar_image():
