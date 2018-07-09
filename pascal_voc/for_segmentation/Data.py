@@ -192,7 +192,7 @@ class PacalVocToTfrecords:
     def _get_pascal_segmentation_image_annotation_filenames_pairs(self):
 
         pascal_relative_images_folder = 'JPEGImages'
-        pascal_relative_class_annotations_folder = 'SegmentationClass'
+        pascal_relative_class_annotations_folder = 'SegmentationClassConverted'
 
         images_extention = 'jpg'
         annotations_extention = 'png'
