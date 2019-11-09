@@ -2,7 +2,6 @@ import os
 import numpy as np
 from PIL import Image
 import tensorflow as tf
-import pickle
 
 from Augmentation import Augmentation
 from Tools import Tools
@@ -114,7 +113,7 @@ class PacalVocToTfrecords:
     pascalvoc 数据解析为 tfrecords文件
     '''
 
-    def __init__(self, pascal_root = '/home/z840/ALISURE/Data/VOC2012', tfrecords_filename='pascal_{}.tfrecords'):
+    def __init__(self, pascal_root = 'E:/data/voc/VOCdevkit/VOC2012', tfrecords_filename='pascal_{}.tfrecords'):
         # 数据根目录
         self.pascal_root = pascal_root
 

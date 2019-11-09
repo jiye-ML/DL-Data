@@ -7,16 +7,6 @@ import sys
 from skimage.io import imread, imsave
 import numpy as np
 
-
-def pascal_classes():
-    classes = {'aeroplane': 1, 'bicycle': 2, 'bird': 3, 'boat': 4,
-               'bottle': 5, 'bus': 6, 'car': 7, 'cat': 8,
-               'chair': 9, 'cow': 10, 'diningtable': 11, 'dog': 12,
-               'horse': 13, 'motorbike': 14, 'person': 15, 'potted-plant': 16,
-               'sheep': 17, 'sofa': 18, 'train': 19, 'tv/monitor': 20}
-
-    return classes
-
 # pacal画板对应关系
 def pascal_palette():
     palette = {(0, 0, 0): 0,
@@ -48,20 +38,22 @@ def convert_from_color_segmentation(arr_3d):
     arr_2d = np.zeros((arr_3d.shape[0], arr_3d.shape[1]), dtype=np.uint8)
     palette = pascal_palette()
 
-    for c, i in palette.items():
-        m = np.all(arr_3d == np.array(c).reshape(1, 1, 3), axis=2)
-        arr_2d[m] = i
+    for color, label in palette.items():
+        temp_arr = np.array(color).reshape(1, 1, 3)
+        temp_arr_boolean = np.equal(arr_3d, temp_arr)
+        m = np.all(temp_arr_boolean, axis=2)
+        arr_2d[m] = label
     return arr_2d
 
 
 def main():
     # 数据目录
-    data_dir = '/home/z840/ALISURE/Data/VOC2012'
+    data_dir = 'E:/data/voc/VOCdevkit/VOC2012'
     # 标签
     path = os.path.join(data_dir, 'SegmentationClass')
     # 转换[0-20]之间的标签
     path_converted = os.path.join(data_dir, "SegmentationClassConverted")
-    txt_file = 'dataset/val.txt'
+    txt_file = os.path.join(data_dir, "ImageSets/Segmentation/val.txt")
 
     # Create dir for converted labels
     if not os.path.isdir(path_converted):
@@ -72,10 +64,11 @@ def main():
         for img_name in f:
             # 找到标签
             img_base_name = img_name.strip().split()
-            img_base_name = img_base_name[1].split("/")[-1]
+            # img_base_name = img_base_name[1].split("/")[-1]
+            img_base_name = img_base_name[0] + ".png"
             img_name = os.path.join(path, img_base_name)
             # 读取图片，3个通道，这样就可以和画版意义对应
-            img = imread(img_name)
+            img = imread(img_name)[:, :, :3]
 
             if (len(img.shape) > 2):
                 # 将][0-255]之间的图片对应到[0-20]
